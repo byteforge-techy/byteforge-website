@@ -1,139 +1,149 @@
-// src/pages/About.jsx — dynamic team from API
+// src/pages/About.jsx — Byte Forge (redesigned to match Home)
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTeam } from "../hooks/usePortfolio";
+import { useContent } from "../hooks/useContent";
 
-function FadeIn({ children, delay=0, style={} }) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold:0.08 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <div ref={ref} style={{ opacity:visible?1:0, transform:visible?"none":"translateY(24px)", transition:`opacity 0.65s ease ${delay}s, transform 0.65s ease ${delay}s`, ...style }}>
-      {children}
-    </div>
-  );
+const BLUE = "#2563eb", AMBER = "#f59e0b", DARK = "#0a0a0a", INK = "#0f172a";
+const wrap = { maxWidth:1200, margin:"0 auto", padding:"0 24px" };
+const fontHead = { fontFamily:"'Outfit',sans-serif" };
+
+function useReveal() {
+  const ref = useRef(null); const [shown, setShown] = useState(false);
+  useEffect(() => { const el=ref.current; if(!el)return;
+    const obs=new IntersectionObserver(([e])=>{if(e.isIntersecting){setShown(true);obs.disconnect();}},{threshold:0.12});
+    obs.observe(el); return ()=>obs.disconnect();
+  }, []); return [ref, shown];
 }
-
-const VALUES = [
-  { icon:"◈", title:"Transparency", desc:"No surprises. We communicate openly at every stage — good news and bad alike." },
-  { icon:"◉", title:"Craftsmanship", desc:"We obsess over details. Every component, every API, every pixel is considered." },
-  { icon:"◇", title:"Partnership", desc:"We treat your business goals as our own. Your success is the only metric that matters." },
-  { icon:"◎", title:"Agility", desc:"Markets change fast. We build flexible teams and processes that adapt with you." },
-];
-
-const MILESTONES = [
-  { year:"2020", title:"Founded in Ahmedabad", desc:"Byte Forge started as a 3-person team with a single mission: build software that lasts." },
-  { year:"2021", title:"First 10 Clients", desc:"Expanded to serve startups across Gujarat." },
-  { year:"2022", title:"Cloud Practice Launched", desc:"Added dedicated DevOps & Cloud team." },
-  { year:"2023", title:"50+ Projects Delivered", desc:"Grew team to 20+ engineers and designers." },
-  { year:"2024", title:"Enterprise Clients", desc:"Onboarded first enterprise contracts." },
-  { year:"2025", title:"Expanding Nationally", desc:"Opening operations in Mumbai and Bangalore." },
-];
+function Reveal({ children, delay=0, style={} }) {
+  const [ref, shown] = useReveal();
+  return <div ref={ref} style={{ opacity:shown?1:0, transform:shown?"translateY(0)":"translateY(30px)", transition:`all 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`, ...style }}>{children}</div>;
+}
+function SectionLabel({ children, color=BLUE }) {
+  return <div style={{ display:"inline-block", ...fontHead, fontWeight:700, fontSize:14, letterSpacing:"2px", textTransform:"uppercase", color, marginBottom:16 }}>{children}</div>;
+}
 
 export default function About() {
   const navigate = useNavigate();
-  const { members, loading } = useTeam();
+  const { members } = useTeam();
+  const { get } = useContent();
+
+  const aboutTag = get("About","tagline","One Senior Engineer. End-to-End Ownership.");
+  const aboutBody = get("About","body","Byte Forge is led by Chintan Joshi — a senior software engineer who's spent 10+ years shipping real products. When you work with Byte Forge, you don't get handed to a junior team. You get a seasoned engineer who handles architecture, development, and deployment personally.");
+
+  const values = [
+    { icon:"🎯", t:"Senior Expertise", d:"A decade-plus of real production experience. You always work directly with the engineer building your product.", c:BLUE },
+    { icon:"📦", t:"Ships & Scales", d:"Real products that reach users and grow with the business — not prototypes that stall.", c:AMBER },
+    { icon:"🔍", t:"Honest & Clear", d:"Straight answers, realistic timelines, and transparent communication at every step.", c:"#7c3aed" },
+    { icon:"🤝", t:"Full Ownership", d:"From architecture to deployment, I take complete responsibility for what I build.", c:"#16a34a" },
+  ];
+
+  const journey = [
+    { y:"2013–2015", t:"MCA — Foundations", d:"Master's in Computer Application. Where the engineering discipline began." },
+    { y:"2016+", t:"Enterprise Systems", d:"Built ERP, streaming, and data-prep systems serving large institutions." },
+    { y:"2023+", t:"Senior Engineer", d:"Leading enterprise dashboards, scalable APIs, and cross-platform apps." },
+    { y:"2026", t:"Byte Forge", d:"Bringing a decade of shipped products directly to businesses that need them." },
+  ];
 
   return (
-    <div style={{ fontFamily:"'Outfit',sans-serif", background:"#fafaf8", minHeight:"100vh" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <div style={{ background:"#fff", ...fontHead, overflowX:"hidden" }}>
       <Navbar />
 
-      {/* Hero */}
-      <section style={{ padding:"140px 5% 80px", background:"linear-gradient(160deg,#fafaf8 60%,#f0fdf4 100%)", borderBottom:"1px solid #e8e8e4" }}>
-        <FadeIn>
-          <div style={{ display:"inline-block", background:"#dcfce7", color:"#16a34a", fontSize:12, fontWeight:700, letterSpacing:"1.2px", padding:"5px 14px", borderRadius:100, textTransform:"uppercase", marginBottom:20 }}>Our Story</div>
-          <h1 style={{ fontSize:"clamp(36px,5vw,64px)", fontWeight:800, letterSpacing:"-2px", color:"#0a0a0a", margin:"0 0 24px", lineHeight:1.08, maxWidth:700 }}>
-            We Believe Great Software<br/><span style={{ color:"#2563eb" }}>Changes Businesses</span>
-          </h1>
-          <p style={{ fontSize:18, color:"#666", maxWidth:580, lineHeight:1.75 }}>
-            Byte Forge was founded in Ahmedabad with a simple belief: every business deserves access to world-class technology.
-          </p>
-        </FadeIn>
-      </section>
-
-      {/* Values */}
-      <section style={{ padding:"80px 5%", background:"#f4f4f0" }}>
-        <FadeIn>
-          <h2 style={{ fontSize:"clamp(26px,3.5vw,42px)", fontWeight:800, letterSpacing:"-1.2px", color:"#0a0a0a", margin:"0 0 48px" }}>Our Core Values</h2>
-        </FadeIn>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:20 }}>
-          {VALUES.map((v,i) => (
-            <FadeIn key={v.title} delay={i*0.07}>
-              <div style={{ background:"#fff", border:"1px solid #e8e8e4", borderRadius:16, padding:"32px 28px" }}>
-                <div style={{ fontSize:28, color:"#2563eb", marginBottom:16 }}>{v.icon}</div>
-                <div style={{ fontWeight:700, fontSize:17, marginBottom:10 }}>{v.title}</div>
-                <div style={{ fontSize:14, color:"#666", lineHeight:1.7 }}>{v.desc}</div>
-              </div>
-            </FadeIn>
-          ))}
+      {/* HERO */}
+      <section style={{ position:"relative", background:`linear-gradient(135deg, ${DARK} 0%, #14172a 55%, #1a2348 100%)`, color:"#fff", paddingTop:150, paddingBottom:110, overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`linear-gradient(${BLUE}11 1px,transparent 1px),linear-gradient(90deg,${BLUE}11 1px,transparent 1px)`, backgroundSize:"56px 56px", opacity:0.5 }}/>
+        <div style={{ position:"absolute", top:-150, right:-100, width:500, height:500, borderRadius:"50%", background:`radial-gradient(circle, ${BLUE}40, transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><SectionLabel color="#bcd0ff">Our Story</SectionLabel></Reveal>
+          <Reveal delay={0.06}>
+            <h1 style={{ ...fontHead, fontSize:"clamp(36px,5.5vw,68px)", fontWeight:800, lineHeight:1.08, letterSpacing:"-2px", margin:"0 0 24px", color:"#fff" }}>
+              {aboutTag}
+            </h1>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <p style={{ fontSize:"clamp(16px,2vw,19px)", lineHeight:1.7, color:"#aab4cf", maxWidth:720, margin:"0 auto" }}>{aboutBody}</p>
+          </Reveal>
         </div>
       </section>
 
-      {/* Team — from API */}
-      <section style={{ padding:"100px 5%" }}>
-        <FadeIn>
-          <div style={{ display:"inline-block", background:"#eff6ff", color:"#2563eb", fontSize:12, fontWeight:700, letterSpacing:"1.2px", padding:"5px 14px", borderRadius:100, textTransform:"uppercase", marginBottom:16 }}>The People</div>
-          <h2 style={{ fontSize:"clamp(26px,3.5vw,42px)", fontWeight:800, letterSpacing:"-1.2px", color:"#0a0a0a", margin:"0 0 12px" }}>Meet the Team</h2>
-          <p style={{ fontSize:16, color:"#666", marginBottom:52, maxWidth:480 }}>A tight-knit group of engineers, designers, and strategists who care deeply about craft.</p>
-        </FadeIn>
-        {loading ? (
-          <div style={{ textAlign:"center", padding:60, color:"#888" }}>Loading team...</div>
-        ) : (
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:24 }}>
-            {members.map((t,i) => (
-              <FadeIn key={t.id||i} delay={i*0.08}>
-                <div style={{ background:"#fff", border:"1px solid #e8e8e4", borderRadius:16, overflow:"hidden" }}>
-                  <div style={{ background:t.color||"#dbeafe", padding:"36px 28px 28px", display:"flex", alignItems:"center", gap:16 }}>
-                    <div style={{ width:56, height:56, borderRadius:"50%", background:t.accentColor||t.accent||"#2563eb", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontWeight:800, fontSize:18 }}>{t.initials}</div>
-                    <div>
-                      <div style={{ fontWeight:800, fontSize:16, color:"#0a0a0a" }}>{t.name}</div>
-                      <div style={{ fontSize:13, color:t.accentColor||t.accent||"#2563eb", fontWeight:600 }}>{t.role}</div>
-                    </div>
-                  </div>
-                  <div style={{ padding:"20px 28px 28px" }}>
-                    <p style={{ fontSize:14, color:"#555", lineHeight:1.7, margin:0 }}>{t.bio}</p>
-                  </div>
+      {/* VALUES */}
+      <section style={{ background:"#fff", padding:"100px 0" }}>
+        <div style={{ ...wrap, textAlign:"center" }}>
+          <Reveal><SectionLabel>What I Stand For</SectionLabel></Reveal>
+          <Reveal delay={0.05}><h2 style={{ ...fontHead, fontSize:"clamp(30px,4vw,46px)", fontWeight:800, color:INK, letterSpacing:"-1px", margin:"0 0 56px" }}>Principles Behind Every Project</h2></Reveal>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(250px,1fr))", gap:24 }}>
+            {values.map((v,i) => (
+              <Reveal key={i} delay={0.05+i*0.07}>
+                <div style={{ background:"#fff", border:"1px solid #ececec", borderRadius:18, padding:"34px 26px", textAlign:"left", height:"100%", boxShadow:"0 4px 20px rgba(0,0,0,0.04)", transition:"transform .3s, box-shadow .3s" }}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 20px 40px rgba(0,0,0,0.1)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.04)";}}>
+                  <div style={{ width:58, height:58, borderRadius:14, background:`${v.c}15`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, marginBottom:18 }}>{v.icon}</div>
+                  <h3 style={{ ...fontHead, fontSize:20, fontWeight:700, color:INK, margin:"0 0 10px" }}>{v.t}</h3>
+                  <p style={{ fontSize:15, lineHeight:1.6, color:"#666", margin:0 }}>{v.d}</p>
                 </div>
-              </FadeIn>
+              </Reveal>
             ))}
           </div>
-        )}
-      </section>
-
-      {/* Timeline */}
-      <section style={{ padding:"80px 5%", background:"#0a0a0a" }}>
-        <FadeIn>
-          <h2 style={{ fontSize:"clamp(26px,3.5vw,42px)", fontWeight:800, letterSpacing:"-1.2px", color:"#fff", margin:"0 0 52px" }}>How We Got Here</h2>
-        </FadeIn>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:20 }}>
-          {MILESTONES.map((m,i) => (
-            <FadeIn key={m.year} delay={i*0.07}>
-              <div style={{ border:"1px solid #1e1e1e", borderRadius:16, padding:"28px 24px" }}>
-                <div style={{ fontSize:13, fontWeight:800, color:"#2563eb", letterSpacing:"1px", marginBottom:12 }}>{m.year}</div>
-                <div style={{ fontSize:16, fontWeight:700, color:"#fff", marginBottom:10 }}>{m.title}</div>
-                <div style={{ fontSize:14, color:"#666", lineHeight:1.7 }}>{m.desc}</div>
-              </div>
-            </FadeIn>
-          ))}
         </div>
       </section>
 
-      <section style={{ padding:"100px 5%", textAlign:"center" }}>
-        <FadeIn>
-          <h2 style={{ fontSize:"clamp(28px,4vw,48px)", fontWeight:800, letterSpacing:"-1.5px", color:"#0a0a0a", marginBottom:16 }}>Want to Work With Us?</h2>
-          <p style={{ color:"#666", fontSize:17, marginBottom:40, maxWidth:480, margin:"0 auto 40px" }}>We're always looking for interesting projects and great people to collaborate with.</p>
-          <button onClick={()=>navigate("/contact")} style={{ background:"#0a0a0a", color:"#fff", border:"none", borderRadius:10, padding:"16px 40px", fontWeight:700, fontSize:16, cursor:"pointer", fontFamily:"'Outfit',sans-serif" }}>
-            Let's Talk →
-          </button>
-        </FadeIn>
+      {/* JOURNEY (dark band) */}
+      <section style={{ background:`linear-gradient(160deg, ${INK}, #1a1f3a)`, padding:"100px 0", position:"relative" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`radial-gradient(circle at 80% 20%, ${BLUE}18, transparent 40%)`, opacity:0.7 }}/>
+        <div style={{ ...wrap, position:"relative", textAlign:"center" }}>
+          <Reveal><SectionLabel color={AMBER}>The Journey</SectionLabel></Reveal>
+          <Reveal delay={0.05}><h2 style={{ ...fontHead, fontSize:"clamp(30px,4vw,46px)", fontWeight:800, color:"#fff", letterSpacing:"-1px", margin:"0 0 56px" }}>A Decade of Building</h2></Reveal>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:24, textAlign:"left" }}>
+            {journey.map((j,i) => (
+              <Reveal key={i} delay={0.05+i*0.08}>
+                <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:16, padding:"28px 24px", height:"100%", backdropFilter:"blur(10px)" }}>
+                  <div style={{ ...fontHead, fontSize:15, fontWeight:700, color:AMBER, marginBottom:10 }}>{j.y}</div>
+                  <h3 style={{ ...fontHead, fontSize:19, fontWeight:700, color:"#fff", margin:"0 0 8px" }}>{j.t}</h3>
+                  <p style={{ fontSize:14.5, lineHeight:1.6, color:"#9aa6c4", margin:0 }}>{j.d}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </section>
+
+      {/* FOUNDER / TEAM */}
+      <section style={{ background:"#f8f9fc", padding:"100px 0" }}>
+        <div style={{ ...wrap, textAlign:"center" }}>
+          <Reveal><SectionLabel>Who You Work With</SectionLabel></Reveal>
+          <Reveal delay={0.05}><h2 style={{ ...fontHead, fontSize:"clamp(30px,4vw,46px)", fontWeight:800, color:INK, letterSpacing:"-1px", margin:"0 0 56px" }}>The Person Behind Byte Forge</h2></Reveal>
+          <div style={{ display:"flex", justifyContent:"center", flexWrap:"wrap", gap:24 }}>
+            {(members||[]).map((m,i) => (
+              <Reveal key={m.id||i} delay={0.05+i*0.08}>
+                <div style={{ background:"#fff", border:"1px solid #ececec", borderRadius:20, padding:"40px 36px", maxWidth:members && members.length===1 ? 480 : 320, textAlign:"center", boxShadow:"0 8px 30px rgba(0,0,0,0.06)" }}>
+                  <div style={{ width:96, height:96, borderRadius:"50%", background:m.color||"#dbeafe", color:m.accentColor||BLUE, display:"flex", alignItems:"center", justifyContent:"center", fontSize:34, fontWeight:800, margin:"0 auto 20px", ...fontHead }}>
+                    {m.initials || (m.name||"").split(" ").map(w=>w[0]).join("").slice(0,2)}
+                  </div>
+                  <h3 style={{ ...fontHead, fontSize:24, fontWeight:800, color:INK, margin:"0 0 6px" }}>{m.name}</h3>
+                  <div style={{ color:m.accentColor||BLUE, fontWeight:600, fontSize:15, marginBottom:16 }}>{m.role}</div>
+                  <p style={{ fontSize:15.5, lineHeight:1.7, color:"#666", margin:0 }}>{m.bio}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background:`linear-gradient(135deg, ${INK}, #1a2348)`, padding:"90px 0", position:"relative", overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", top:-100, right:-60, width:360, height:360, borderRadius:"50%", background:`radial-gradient(circle,${AMBER}30,transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ position:"absolute", bottom:-100, left:-60, width:360, height:360, borderRadius:"50%", background:`radial-gradient(circle,${BLUE}40,transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><h2 style={{ ...fontHead, fontSize:"clamp(30px,4.5vw,48px)", fontWeight:800, color:"#fff", letterSpacing:"-1px", margin:"0 0 18px" }}>Let's Build Something Together</h2></Reveal>
+          <Reveal delay={0.08}><p style={{ fontSize:18, color:"#aab4cf", maxWidth:540, margin:"0 auto 34px" }}>Have a project in mind? I respond personally within 24 hours.</p></Reveal>
+          <Reveal delay={0.16}>
+            <button onClick={()=>navigate("/contact")} style={{ ...fontHead, background:`linear-gradient(90deg,${AMBER},#fbbf24)`, color:INK, border:"none", padding:"16px 38px", borderRadius:12, fontSize:16, fontWeight:800, cursor:"pointer", boxShadow:"0 10px 30px rgba(245,158,11,0.4)" }}>Get in Touch →</button>
+          </Reveal>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

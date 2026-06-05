@@ -1,174 +1,129 @@
-// src/pages/Services.jsx
+// src/pages/Services.jsx — Byte Forge (redesigned to match Home)
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useContent } from "../hooks/useContent";
 
-const SERVICES = [
-  {
-    icon: "◈", title: "Web Development", color: "#dbeafe", accent: "#2563eb",
-    tagline: "Fast, scalable, beautiful web applications.",
-    desc: "We craft high-performance web apps using React, Next.js, and ASP.NET — from marketing sites to full enterprise portals. Every line of code is written for speed, accessibility, and long-term maintainability.",
-    features: ["React / Next.js / Vue frontends", "ASP.NET Core & Node.js backends", "REST & GraphQL APIs", "SEO-optimized architecture", "CMS integration (WordPress, Contentful)", "Progressive Web Apps (PWA)"],
-    tech: ["React", "Next.js", "ASP.NET", "TypeScript", "PostgreSQL", "Redis"],
-  },
-  {
-    icon: "◉", title: "Mobile Apps", color: "#dcfce7", accent: "#16a34a",
-    tagline: "Cross-platform apps your users will love.",
-    desc: "From concept to App Store, we build polished iOS and Android apps using React Native and Flutter. Our mobile apps are built for performance, offline support, and seamless backend integration.",
-    features: ["React Native & Flutter", "iOS & Android deployment", "Push notifications & analytics", "Offline-first architecture", "In-app payments", "App Store optimization"],
-    tech: ["React Native", "Flutter", "Firebase", "Swift", "Kotlin", "Expo"],
-  },
-  {
-    icon: "◇", title: "UI/UX Design", color: "#fef9c3", accent: "#ca8a04",
-    tagline: "Design that converts, not just impresses.",
-    desc: "We research, prototype, and design interfaces that guide users intuitively to their goals. Our design process is rooted in user behavior, business objectives, and aesthetic precision.",
-    features: ["User research & personas", "Wireframing & prototyping", "Figma design systems", "Usability testing", "Accessibility (WCAG 2.1)", "Brand identity & guidelines"],
-    tech: ["Figma", "FigJam", "Maze", "Hotjar", "Lottie", "Storybook"],
-  },
-  {
-    icon: "◎", title: "IT Consulting", color: "#fce7f3", accent: "#db2777",
-    tagline: "Strategic technology decisions that actually matter.",
-    desc: "We help CTOs and founders make the right technology choices. From architecture reviews to digital transformation roadmaps, our consultants bring real-world experience across dozens of industries.",
-    features: ["Technology stack evaluation", "Architecture design & review", "Digital transformation planning", "Legacy system modernization", "Vendor selection & management", "Tech team hiring support"],
-    tech: ["Azure", "AWS", "GCP", "Docker", "Kubernetes", "Terraform"],
-  },
-  {
-    icon: "▣", title: "Custom Software", color: "#ede9fe", accent: "#7c3aed",
-    tagline: "Software built for your exact workflows.",
-    desc: "Off-the-shelf tools aren't always the answer. We build bespoke software — ERPs, CRMs, internal tools, and automation pipelines — engineered precisely for how your business operates.",
-    features: ["ERP & CRM systems", "Internal dashboards & tools", "Workflow automation", "Data pipelines & ETL", "Third-party integrations", "Reporting & analytics"],
-    tech: ["C#", ".NET", "Python", "Power BI", "SQL Server", "RabbitMQ"],
-  },
-  {
-    icon: "⬡", title: "Cloud & DevOps", color: "#ffedd5", accent: "#ea580c",
-    tagline: "Reliable infrastructure that scales with you.",
-    desc: "We design, deploy, and manage cloud infrastructure that's fast, secure, and cost-efficient. CI/CD pipelines, container orchestration, monitoring — we handle the ops so you can focus on building.",
-    features: ["AWS / Azure / GCP setup", "Docker & Kubernetes", "CI/CD pipelines (GitHub Actions)", "Infrastructure as Code", "Monitoring & alerting", "Security & compliance"],
-    tech: ["AWS", "Azure", "Kubernetes", "Terraform", "GitHub Actions", "Datadog"],
-  },
-];
+const BLUE = "#2563eb", AMBER = "#f59e0b", DARK = "#0a0a0a", INK = "#0f172a";
+const wrap = { maxWidth:1200, margin:"0 auto", padding:"0 24px" };
+const fontHead = { fontFamily:"'Outfit',sans-serif" };
 
-function useInView() {
-  const { useRef, useState, useEffect } = require("react");
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, visible];
+function useReveal() {
+  const ref = useRef(null); const [shown, setShown] = useState(false);
+  useEffect(() => { const el=ref.current; if(!el)return;
+    const obs=new IntersectionObserver(([e])=>{if(e.isIntersecting){setShown(true);obs.disconnect();}},{threshold:0.1});
+    obs.observe(el); return ()=>obs.disconnect();
+  }, []); return [ref, shown];
 }
-
-import { useRef, useState, useEffect } from "react";
-
-function FadeIn({ children, delay = 0 }) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.08 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s` }}>
-      {children}
-    </div>
-  );
+function Reveal({ children, delay=0, style={} }) {
+  const [ref, shown] = useReveal();
+  return <div ref={ref} style={{ opacity:shown?1:0, transform:shown?"translateY(0)":"translateY(30px)", transition:`all 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`, ...style }}>{children}</div>;
+}
+function SectionLabel({ children, color=BLUE }) {
+  return <div style={{ display:"inline-block", ...fontHead, fontWeight:700, fontSize:14, letterSpacing:"2px", textTransform:"uppercase", color, marginBottom:16 }}>{children}</div>;
 }
 
 export default function Services() {
   const navigate = useNavigate();
+  const { get } = useContent();
+  const servicesTag = get("Services","tagline","From ideation to deployment, I cover every layer of your digital product.");
+
+  const services = [
+    { icon:"📱", title:"Mobile App Development", desc:"Native Android (Java/Kotlin) and cross-platform Flutter apps — ship to Android, iOS, and web from one clean codebase.", points:["Flutter & native Android","iOS via Flutter","Material Design & custom UI"], c:BLUE },
+    { icon:"🌐", title:"Web Development", desc:"Responsive, modern web apps with React and Angular. Fast, accessible, and built to scale with your business.", points:["React & Angular","Responsive design","Performance-optimized"], c:"#7c3aed" },
+    { icon:"⚙️", title:"Backend & APIs", desc:"Robust server-side systems and REST APIs in .NET Core and Laravel, with secure JWT authentication.", points:[".NET Core & Laravel","REST API design","JWT auth & security"], c:AMBER },
+    { icon:"☁️", title:"Cloud & DevOps", desc:"AWS deployment, CI/CD pipelines, and reliable infrastructure that keeps your product running smoothly.", points:["AWS (Lambda, S3, more)","CI/CD pipelines","Monitoring & scaling"], c:"#16a34a" },
+    { icon:"🏥", title:"Healthcare Apps", desc:"Diagnostic booking, report tracking, and patient-facing health apps — a domain with proven delivery.", points:["Booking & scheduling","Report tracking","HIPAA-aware design"], c:"#db2777" },
+    { icon:"🛒", title:"E-Commerce & POS", desc:"Shopping platforms, marketplaces, and restaurant POS systems with payments and real-time inventory.", points:["Online stores","Marketplaces","POS & inventory"], c:"#0891b2" },
+  ];
+
+  const process = [
+    { n:"01", t:"Discovery", d:"We talk through your idea, goals, and constraints — honestly." },
+    { n:"02", t:"Architecture", d:"I design a clean, scalable structure before writing a line of code." },
+    { n:"03", t:"Build & Iterate", d:"Development with regular check-ins so you're never in the dark." },
+    { n:"04", t:"Ship & Support", d:"Deployment to production, plus support to keep it running." },
+  ];
 
   return (
-    <div style={{ fontFamily: "'Outfit', sans-serif", background: "#fafaf8", minHeight: "100vh" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div style={{ background:"#fff", ...fontHead, overflowX:"hidden" }}>
       <Navbar />
 
-      {/* Hero */}
-      <section style={{
-        paddingTop: 140, paddingBottom: 80, padding: "140px 5% 80px",
-        background: "linear-gradient(160deg, #fafaf8 60%, #eff6ff 100%)",
-        borderBottom: "1px solid #e8e8e4",
-      }}>
-        <FadeIn>
-          <div style={{ display: "inline-block", background: "#eff6ff", color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "1.2px", padding: "5px 14px", borderRadius: 100, textTransform: "uppercase", marginBottom: 20 }}>
-            What We Offer
-          </div>
-          <h1 style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 800, letterSpacing: "-2px", color: "#0a0a0a", margin: "0 0 20px", lineHeight: 1.08 }}>
-            End-to-End IT Services<br />
-            <span style={{ color: "#2563eb" }}>Built to Scale</span>
-          </h1>
-          <p style={{ fontSize: 18, color: "#666", maxWidth: 560, lineHeight: 1.75 }}>
-            From wireframes to cloud deployment — Byte Forge covers every layer of your digital product with senior-level expertise.
-          </p>
-        </FadeIn>
+      {/* HERO */}
+      <section style={{ position:"relative", background:`linear-gradient(135deg, ${DARK} 0%, #14172a 55%, #1a2348 100%)`, color:"#fff", paddingTop:150, paddingBottom:110, overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`linear-gradient(${BLUE}11 1px,transparent 1px),linear-gradient(90deg,${BLUE}11 1px,transparent 1px)`, backgroundSize:"56px 56px", opacity:0.5 }}/>
+        <div style={{ position:"absolute", top:-150, left:-100, width:500, height:500, borderRadius:"50%", background:`radial-gradient(circle, ${BLUE}40, transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><SectionLabel color="#bcd0ff">What I Offer</SectionLabel></Reveal>
+          <Reveal delay={0.06}>
+            <h1 style={{ ...fontHead, fontSize:"clamp(36px,6vw,72px)", fontWeight:800, lineHeight:1.05, letterSpacing:"-2px", margin:"0 0 10px", color:"#fff" }}>
+              End-to-End IT Services
+            </h1>
+            <div style={{ ...fontHead, fontSize:"clamp(28px,4.5vw,56px)", fontWeight:800, letterSpacing:"-2px", marginBottom:24, background:`linear-gradient(90deg,${BLUE},#7c3aed)`, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Built to Scale</div>
+          </Reveal>
+          <Reveal delay={0.12}><p style={{ fontSize:"clamp(16px,2vw,19px)", lineHeight:1.7, color:"#aab4cf", maxWidth:680, margin:"0 auto" }}>{servicesTag}</p></Reveal>
+        </div>
       </section>
 
-      {/* Services */}
-      <section style={{ padding: "80px 5%" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
-          {SERVICES.map((s, i) => (
-            <FadeIn key={s.title} delay={0.05}>
-              <div style={{
-                display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 0,
-                background: "#fff", border: "1px solid #e8e8e4", borderRadius: 20,
-                overflow: "hidden",
-              }} className="service-row">
-                {/* Left panel */}
-                <div style={{ background: s.color, padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                  <div>
-                    <div style={{ fontSize: 48, marginBottom: 20, color: s.accent }}>{s.icon}</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: "#0a0a0a", letterSpacing: "-0.5px", marginBottom: 10 }}>{s.title}</div>
-                    <div style={{ fontSize: 14, color: "#555", fontStyle: "italic" }}>{s.tagline}</div>
-                  </div>
-                  <div style={{ marginTop: 40 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", color: "#888", textTransform: "uppercase", marginBottom: 14 }}>Tech Stack</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                      {s.tech.map(t => (
-                        <span key={t} style={{ background: "#fff", border: `1px solid ${s.accent}33`, color: s.accent, fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 100 }}>{t}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                {/* Right panel */}
-                <div style={{ padding: "48px 44px" }}>
-                  <p style={{ fontSize: 15, color: "#555", lineHeight: 1.8, marginBottom: 32 }}>{s.desc}</p>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 24px" }}>
-                    {s.features.map(f => (
-                      <div key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                        <div style={{ width: 20, height: 20, borderRadius: 5, background: `${s.accent}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: s.accent, fontWeight: 800, flexShrink: 0, marginTop: 1 }}>✓</div>
-                        <span style={{ fontSize: 14, color: "#444", lineHeight: 1.5 }}>{f}</span>
+      {/* SERVICES GRID */}
+      <section style={{ background:"#fff", padding:"100px 0" }}>
+        <div style={{ ...wrap }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(330px,1fr))", gap:24 }}>
+            {services.map((s,i) => (
+              <Reveal key={i} delay={0.04+i*0.06}>
+                <div style={{ background:"#fff", border:"1px solid #ececec", borderRadius:18, padding:"36px 30px", height:"100%", boxShadow:"0 4px 20px rgba(0,0,0,0.04)", transition:"transform .3s, box-shadow .3s", borderTop:`3px solid ${s.c}` }}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 24px 48px rgba(0,0,0,0.12)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.04)";}}>
+                  <div style={{ width:60, height:60, borderRadius:14, background:`${s.c}15`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, marginBottom:20 }}>{s.icon}</div>
+                  <h3 style={{ ...fontHead, fontSize:22, fontWeight:700, color:INK, margin:"0 0 12px" }}>{s.title}</h3>
+                  <p style={{ fontSize:15.5, lineHeight:1.65, color:"#666", margin:"0 0 18px" }}>{s.desc}</p>
+                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                    {s.points.map((p,j) => (
+                      <div key={j} style={{ display:"flex", alignItems:"center", gap:10, fontSize:14.5, color:"#444" }}>
+                        <span style={{ width:6, height:6, borderRadius:"50%", background:s.c, flexShrink:0 }}/>{p}
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            </FadeIn>
-          ))}
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS (dark band) */}
+      <section style={{ background:`linear-gradient(160deg, ${INK}, #1a1f3a)`, padding:"100px 0", position:"relative" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`radial-gradient(circle at 20% 30%, ${BLUE}18, transparent 40%)`, opacity:0.7 }}/>
+        <div style={{ ...wrap, position:"relative", textAlign:"center" }}>
+          <Reveal><SectionLabel color={AMBER}>How I Work</SectionLabel></Reveal>
+          <Reveal delay={0.05}><h2 style={{ ...fontHead, fontSize:"clamp(30px,4vw,46px)", fontWeight:800, color:"#fff", letterSpacing:"-1px", margin:"0 0 56px" }}>A Clear, Honest Process</h2></Reveal>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:24, textAlign:"left" }}>
+            {process.map((p,i) => (
+              <Reveal key={i} delay={0.05+i*0.08}>
+                <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:16, padding:"30px 26px", height:"100%", backdropFilter:"blur(10px)" }}>
+                  <div style={{ ...fontHead, fontSize:40, fontWeight:800, color:`${BLUE}`, opacity:0.5, marginBottom:12 }}>{p.n}</div>
+                  <h3 style={{ ...fontHead, fontSize:20, fontWeight:700, color:"#fff", margin:"0 0 8px" }}>{p.t}</h3>
+                  <p style={{ fontSize:14.5, lineHeight:1.6, color:"#9aa6c4", margin:0 }}>{p.d}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section style={{ padding: "80px 5%", background: "#0a0a0a", textAlign: "center" }}>
-        <FadeIn>
-          <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: "#fff", letterSpacing: "-1.5px", marginBottom: 16 }}>
-            Ready to Start a Project?
-          </h2>
-          <p style={{ color: "#888", fontSize: 17, marginBottom: 40 }}>Tell us what you need — we'll respond within 24 hours.</p>
-          <button
-            onClick={() => navigate("/contact")}
-            style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "16px 40px", fontWeight: 700, fontSize: 16, cursor: "pointer", fontFamily: "'Outfit', sans-serif" }}
-          >
-            Get a Free Consultation →
-          </button>
-        </FadeIn>
+      <section style={{ background:`linear-gradient(135deg, ${BLUE}, #1e40af)`, padding:"90px 0", position:"relative", overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px)`, backgroundSize:"40px 40px" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><h2 style={{ ...fontHead, fontSize:"clamp(30px,4.5vw,48px)", fontWeight:800, color:"#fff", letterSpacing:"-1px", margin:"0 0 18px" }}>Ready to Start Your Project?</h2></Reveal>
+          <Reveal delay={0.08}><p style={{ fontSize:18, color:"#cdd9ff", maxWidth:540, margin:"0 auto 34px" }}>Tell me what you're building. I'll give you honest, practical advice within 24 hours.</p></Reveal>
+          <Reveal delay={0.16}>
+            <button onClick={()=>navigate("/contact")} style={{ ...fontHead, background:`linear-gradient(90deg,${AMBER},#fbbf24)`, color:INK, border:"none", padding:"16px 38px", borderRadius:12, fontSize:16, fontWeight:800, cursor:"pointer", boxShadow:"0 10px 30px rgba(245,158,11,0.4)" }}>Start a Conversation →</button>
+          </Reveal>
+        </div>
       </section>
 
       <Footer />
-      <style>{`
-        @media (max-width: 768px) { .service-row { grid-template-columns: 1fr !important; } }
-      `}</style>
     </div>
   );
 }

@@ -1,113 +1,123 @@
-// src/pages/Portfolio.jsx — dynamic from API
+// src/pages/Portfolio.jsx — Byte Forge (redesigned to match Home)
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { usePortfolio } from "../hooks/usePortfolio";
 
-function FadeIn({ children, delay=0 }) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold:0.08 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <div ref={ref} style={{ opacity:visible?1:0, transform:visible?"none":"translateY(24px)", transition:`opacity 0.65s ease ${delay}s, transform 0.65s ease ${delay}s` }}>
-      {children}
-    </div>
-  );
+const BLUE = "#2563eb", AMBER = "#f59e0b", DARK = "#0a0a0a", INK = "#0f172a";
+const wrap = { maxWidth:1200, margin:"0 auto", padding:"0 24px" };
+const fontHead = { fontFamily:"'Outfit',sans-serif" };
+
+function useReveal() {
+  const ref = useRef(null); const [shown, setShown] = useState(false);
+  useEffect(() => { const el=ref.current; if(!el)return;
+    const obs=new IntersectionObserver(([e])=>{if(e.isIntersecting){setShown(true);obs.disconnect();}},{threshold:0.1});
+    obs.observe(el); return ()=>obs.disconnect();
+  }, []); return [ref, shown];
+}
+function Reveal({ children, delay=0, style={} }) {
+  const [ref, shown] = useReveal();
+  return <div ref={ref} style={{ opacity:shown?1:0, transform:shown?"translateY(0)":"translateY(30px)", transition:`all 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`, ...style }}>{children}</div>;
+}
+function SectionLabel({ children, color=BLUE }) {
+  return <div style={{ display:"inline-block", ...fontHead, fontWeight:700, fontSize:14, letterSpacing:"2px", textTransform:"uppercase", color, marginBottom:16 }}>{children}</div>;
 }
 
 export default function Portfolio() {
   const navigate = useNavigate();
   const { items, loading } = usePortfolio();
-  const [active, setActive] = useState("All");
+  const [filter, setFilter] = useState("All");
 
-  const tags = ["All", ...new Set(items.map(p => p.tag).filter(Boolean))];
-  const filtered = active === "All" ? items : items.filter(p => p.tag === active);
+  const tags = ["All", ...Array.from(new Set((items||[]).map(i => i.tag).filter(Boolean)))];
+  const filtered = filter === "All" ? items : (items||[]).filter(i => i.tag === filter);
 
   return (
-    <div style={{ fontFamily:"'Outfit',sans-serif", background:"#fafaf8", minHeight:"100vh" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-      <style>{`@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}} .proj-row{transition:all 0.3s;} @media(max-width:768px){.proj-row{grid-template-columns:1fr!important;}}`}</style>
+    <div style={{ background:"#fff", ...fontHead, overflowX:"hidden" }}>
       <Navbar />
 
-      <section style={{ padding:"140px 5% 60px", background:"linear-gradient(160deg,#fafaf8 60%,#ede9fe 100%)", borderBottom:"1px solid #e8e8e4" }}>
-        <FadeIn>
-          <div style={{ display:"inline-block", background:"#ede9fe", color:"#7c3aed", fontSize:12, fontWeight:700, letterSpacing:"1.2px", padding:"5px 14px", borderRadius:100, textTransform:"uppercase", marginBottom:20 }}>Case Studies</div>
-          <h1 style={{ fontSize:"clamp(36px,5vw,64px)", fontWeight:800, letterSpacing:"-2px", color:"#0a0a0a", margin:"0 0 20px", lineHeight:1.08 }}>
-            Work We're<br/><span style={{ color:"#2563eb" }}>Proud Of</span>
-          </h1>
-          <p style={{ fontSize:18, color:"#666", maxWidth:520, lineHeight:1.75, marginBottom:48 }}>Real projects. Real results. A selection of engagements that made a measurable difference.</p>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:10 }}>
-            {tags.map(f => (
-              <button key={f} onClick={() => setActive(f)} style={{ background:active===f?"#0a0a0a":"#fff", color:active===f?"#fff":"#555", border:"1.5px solid", borderColor:active===f?"#0a0a0a":"#e0e0da", borderRadius:100, padding:"8px 18px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"'Outfit',sans-serif", transition:"all 0.2s" }}>
-                {f}
-              </button>
-            ))}
-          </div>
-        </FadeIn>
+      {/* HERO */}
+      <section style={{ position:"relative", background:`linear-gradient(135deg, ${DARK} 0%, #14172a 55%, #1a2348 100%)`, color:"#fff", paddingTop:150, paddingBottom:100, overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`linear-gradient(${BLUE}11 1px,transparent 1px),linear-gradient(90deg,${BLUE}11 1px,transparent 1px)`, backgroundSize:"56px 56px", opacity:0.5 }}/>
+        <div style={{ position:"absolute", top:-150, right:-100, width:500, height:500, borderRadius:"50%", background:`radial-gradient(circle, ${BLUE}40, transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><SectionLabel color="#bcd0ff">Selected Work</SectionLabel></Reveal>
+          <Reveal delay={0.06}>
+            <h1 style={{ ...fontHead, fontSize:"clamp(36px,6vw,72px)", fontWeight:800, lineHeight:1.05, letterSpacing:"-2px", margin:"0 0 22px", color:"#fff" }}>
+              Apps I've Shipped
+            </h1>
+          </Reveal>
+          <Reveal delay={0.12}><p style={{ fontSize:"clamp(16px,2vw,19px)", lineHeight:1.7, color:"#aab4cf", maxWidth:660, margin:"0 auto" }}>Real products, used by real people — across healthcare, e-commerce, logistics, and enterprise.</p></Reveal>
+        </div>
       </section>
 
-      <section style={{ padding:"60px 5% 80px" }}>
-        {loading ? (
-          <div style={{ textAlign:"center", padding:80, color:"#888" }}>
-            <div style={{ fontSize:36, animation:"spin 1s linear infinite", display:"inline-block" }}>⟳</div>
-            <div style={{ marginTop:16 }}>Loading projects...</div>
+      {/* FILTER + GRID */}
+      <section style={{ background:"#f8f9fc", padding:"70px 0 100px" }}>
+        <div style={{ ...wrap }}>
+          {/* filter tabs */}
+          <div style={{ display:"flex", flexWrap:"wrap", gap:12, justifyContent:"center", marginBottom:48 }}>
+            {tags.map((t,i) => (
+              <button key={i} onClick={()=>setFilter(t)} style={{ ...fontHead, padding:"10px 24px", borderRadius:30, fontSize:14.5, fontWeight:600, cursor:"pointer", border:filter===t?"none":"1px solid #ddd", background:filter===t?INK:"#fff", color:filter===t?"#fff":"#555", transition:"all .2s" }}>{t}</button>
+            ))}
           </div>
-        ) : (
-          <div style={{ display:"flex", flexDirection:"column", gap:32 }}>
-            {filtered.map((p,i) => (
-              <FadeIn key={p.id||i} delay={i*0.05}>
-                <div className="proj-row" style={{ background:"#fff", border:"1px solid #e8e8e4", borderRadius:20, overflow:"hidden", display:"grid", gridTemplateColumns:"300px 1fr" }}>
-                  <div style={{ background:p.backgroundColor||"#0a0a0a", padding:"40px 32px", display:"flex", flexDirection:"column", justifyContent:"space-between", minHeight:200 }}>
-                    <div>
-                      <div style={{ fontSize:11, fontWeight:700, color:p.accentColor||"#2563eb", letterSpacing:"1.5px", textTransform:"uppercase", marginBottom:14 }}>{p.tag}</div>
-                      <div style={{ fontSize:22, fontWeight:800, color:"#fff", letterSpacing:"-0.5px", lineHeight:1.2, marginBottom:12 }}>{p.title}</div>
-                      <div style={{ fontSize:13, color:"rgba(255,255,255,0.5)", lineHeight:1.6 }}>{p.description}</div>
-                    </div>
-                    <div style={{ marginTop:32 }}>
-                      <div style={{ fontSize:12, color:"rgba(255,255,255,0.3)" }}>Duration · {p.duration || "—"}</div>
-                    </div>
-                  </div>
-                  <div style={{ padding:"36px 40px" }}>
-                    {p.results && (
-                      <div style={{ marginBottom:24 }}>
-                        <div style={{ fontSize:11, fontWeight:700, letterSpacing:"1.2px", color:"#999", textTransform:"uppercase", marginBottom:14 }}>Key Results</div>
-                        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px 20px" }}>
-                          {(typeof p.results === "string" ? p.results.split(",") : p.results).map((r,j) => (
-                            <div key={j} style={{ display:"flex", gap:8, alignItems:"center" }}>
-                              <div style={{ width:6, height:6, borderRadius:"50%", background:p.accentColor||"#2563eb", flexShrink:0 }}/>
-                              <span style={{ fontSize:13, color:"#333", fontWeight:500 }}>{r.trim()}</span>
-                            </div>
-                          ))}
-                        </div>
+
+          {loading ? (
+            <div style={{ textAlign:"center", color:"#888", padding:"60px 0" }}>Loading projects…</div>
+          ) : (
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))", gap:24 }}>
+              {filtered.map((p,i) => {
+                const results = (() => { try { return p.results ? JSON.parse(p.results) : []; } catch { return String(p.results||"").split(",").map(s=>s.trim()).filter(Boolean); } })();
+                return (
+                  <Reveal key={p.id||i} delay={0.03+(i%3)*0.06}>
+                    <div style={{ background:"#fff", borderRadius:18, overflow:"hidden", border:"1px solid #ececec", height:"100%", boxShadow:"0 4px 20px rgba(0,0,0,0.04)", transition:"transform .3s, box-shadow .3s" }}
+                      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 24px 48px rgba(0,0,0,0.12)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.04)";}}>
+                      <div style={{ height:170, background:`linear-gradient(135deg, ${p.backgroundColor||INK}, ${p.accentColor||BLUE})`, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", padding:"0 20px" }}>
+                        <span style={{ ...fontHead, fontSize:26, fontWeight:800, color:"#fff", textAlign:"center" }}>{p.title}</span>
+                        {p.tag && <span style={{ position:"absolute", top:14, right:14, background:"rgba(255,255,255,0.2)", color:"#fff", fontSize:12, fontWeight:600, padding:"5px 12px", borderRadius:20, backdropFilter:"blur(10px)" }}>{p.tag}</span>}
                       </div>
-                    )}
-                    <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
-                      {(p.techStack||"").split(",").filter(Boolean).map(t => (
-                        <span key={t} style={{ background:"#f4f4f0", color:"#555", fontSize:12, fontWeight:600, padding:"4px 12px", borderRadius:100 }}>{t.trim()}</span>
-                      ))}
+                      <div style={{ padding:"26px 24px" }}>
+                        <p style={{ fontSize:15, lineHeight:1.6, color:"#555", margin:"0 0 16px" }}>{p.description}</p>
+                        {p.techStack && (
+                          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:results.length?16:0 }}>
+                            {String(p.techStack).split(",").map((t,j) => (
+                              <span key={j} style={{ background:"#f0f3fa", color:BLUE, fontSize:12, fontWeight:600, padding:"4px 10px", borderRadius:8 }}>{t.trim()}</span>
+                            ))}
+                          </div>
+                        )}
+                        {results.length > 0 && (
+                          <div style={{ display:"flex", flexDirection:"column", gap:7, borderTop:"1px solid #f0f0f0", paddingTop:16 }}>
+                            {results.map((r,j) => (
+                              <div key={j} style={{ display:"flex", alignItems:"center", gap:8, fontSize:13.5, color:"#444" }}>
+                                <span style={{ color:"#16a34a", fontWeight:700 }}>✓</span>{r}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {p.duration && <div style={{ marginTop:14, fontSize:13, color:"#999" }}>⏱ {p.duration}</div>}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        )}
+                  </Reveal>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </section>
 
-      <section style={{ padding:"80px 5%", background:"#0a0a0a", textAlign:"center" }}>
-        <FadeIn>
-          <h2 style={{ fontSize:"clamp(28px,4vw,48px)", fontWeight:800, color:"#fff", letterSpacing:"-1.5px", marginBottom:16 }}>Your Project Could Be Next</h2>
-          <p style={{ color:"#888", fontSize:17, marginBottom:40 }}>Let's discuss what we can build together.</p>
-          <button onClick={()=>navigate("/contact")} style={{ background:"#2563eb", color:"#fff", border:"none", borderRadius:10, padding:"16px 40px", fontWeight:700, fontSize:16, cursor:"pointer", fontFamily:"'Outfit',sans-serif" }}>
-            Start Your Project →
-          </button>
-        </FadeIn>
+      {/* CTA */}
+      <section style={{ background:`linear-gradient(135deg, ${INK}, #1a2348)`, padding:"90px 0", position:"relative", overflow:"hidden", textAlign:"center" }}>
+        <div style={{ position:"absolute", top:-100, right:-60, width:360, height:360, borderRadius:"50%", background:`radial-gradient(circle,${AMBER}30,transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ position:"absolute", bottom:-100, left:-60, width:360, height:360, borderRadius:"50%", background:`radial-gradient(circle,${BLUE}40,transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ ...wrap, position:"relative" }}>
+          <Reveal><h2 style={{ ...fontHead, fontSize:"clamp(30px,4.5vw,48px)", fontWeight:800, color:"#fff", letterSpacing:"-1px", margin:"0 0 18px" }}>Want Something Like This Built?</h2></Reveal>
+          <Reveal delay={0.08}><p style={{ fontSize:18, color:"#aab4cf", maxWidth:540, margin:"0 auto 34px" }}>Let's talk about your project — I respond personally within 24 hours.</p></Reveal>
+          <Reveal delay={0.16}>
+            <button onClick={()=>navigate("/contact")} style={{ ...fontHead, background:`linear-gradient(90deg,${AMBER},#fbbf24)`, color:INK, border:"none", padding:"16px 38px", borderRadius:12, fontSize:16, fontWeight:800, cursor:"pointer", boxShadow:"0 10px 30px rgba(245,158,11,0.4)" }}>Start a Conversation →</button>
+          </Reveal>
+        </div>
       </section>
+
       <Footer />
     </div>
   );

@@ -340,7 +340,7 @@ export default function Home() {
                   <div onClick={() => navigate("/portfolio")} style={{ background:"#fff", borderRadius:18, overflow:"hidden", border:"1px solid #ececec", cursor:"pointer", height:"100%", boxShadow:"0 4px 20px rgba(0,0,0,0.04)", transition:"transform 0.3s, box-shadow 0.3s" }}
                     onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 24px 48px rgba(0,0,0,0.12)";}}
                     onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.04)";}}>
-                    <div style={{ height:160, background:`linear-gradient(135deg, ${p.bgColor||INK}, ${p.accentColor||BLUE})`, display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
+                    <div style={{ height:160, background:`linear-gradient(135deg, ${p.backgroundColor||INK}, ${p.accentColor||BLUE})`, display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
                       <span style={{ ...fontHead, fontSize:26, fontWeight:800, color:"#fff", padding:"0 20px", textAlign:"center" }}>{p.title}</span>
                       {p.tag && <span style={{ position:"absolute", top:14, right:14, background:"rgba(255,255,255,0.2)", color:"#fff", fontSize:12, fontWeight:600, padding:"5px 12px", borderRadius:20, backdropFilter:"blur(10px)" }}>{p.tag}</span>}
                     </div>
