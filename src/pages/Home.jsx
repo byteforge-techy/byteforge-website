@@ -128,7 +128,7 @@ export default function Home() {
   const heroBadge = get("Hero","badge","Available for new projects — 2026");
   const heroH1 = get("Hero","headline1","I Build Apps");
   const heroH2 = get("Hero","headline2","That Ship & Scale.");
-  const heroSub = get("Hero","subtitle","I'm Chintan Joshi — a senior engineer with 10+ years and 9+ live apps across healthcare, e-commerce, and enterprise. From Flutter mobile apps to .NET backends and cloud deployment, you work directly with the person building your product.");
+  const heroSub = get("Hero","subtitle","I'm Chintan — a senior engineer with 10+ years and 9+ live apps across healthcare, e-commerce, and enterprise. From Flutter mobile apps to .NET backends and cloud deployment, you work directly with the person building your product.");
   const cta1 = get("Hero","cta1","Explore Services →");
   const cta2 = get("Hero","cta2","View Our Work");
 
@@ -138,7 +138,7 @@ export default function Home() {
   const statsDelivery = get("Stats","delivery","10");
 
   const aboutTag = get("About","tagline","One Senior Engineer. End-to-End Ownership.");
-  const aboutBody = get("About","body","Byte Forge is led by Chintan Joshi — a senior software engineer who's spent 10+ years shipping real products. When you work with Byte Forge, you don't get handed to a junior team. You get a seasoned engineer who handles architecture, development, and deployment personally.");
+  const aboutBody = get("About","body","Byte Forge is led by Chintan — a senior software engineer who's spent 10+ years shipping real products. When you work with Byte Forge, you don't get handed to a junior team. You get a seasoned engineer who handles architecture, development, and deployment personally.");
 
   const servicesTag = get("Services","tagline","From ideation to deployment, I cover every layer of your digital product.");
 

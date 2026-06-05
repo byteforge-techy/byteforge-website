@@ -10,12 +10,6 @@ const FALLBACK_PORTFOLIO = [
   { id:4, tag:"Cloud & DevOps", title:"ScaleStack Infra", description:"Zero-downtime cloud migration and auto-scaling for a SaaS provider.", backgroundColor:"#12232e", accentColor:"#7c3aed", isVisible:true },
 ];
 
-const FALLBACK_TEAM = [
-  { id:1, name:"Aryan Patel", role:"Founder & CEO", bio:"10+ years in enterprise software. Passionate about building products that solve real problems.", initials:"AP", color:"#dbeafe", accentColor:"#2563eb", isActive:true },
-  { id:2, name:"Meera Shah", role:"Head of Design", bio:"Award-winning UX designer. Believes great design is invisible — it just works.", initials:"MS", color:"#fce7f3", accentColor:"#db2777", isActive:true },
-  { id:3, name:"Rahul Joshi", role:"Lead Engineer", bio:"Full-stack architect with deep expertise in cloud infrastructure.", initials:"RJ", color:"#dcfce7", accentColor:"#16a34a", isActive:true },
-  { id:4, name:"Nisha Verma", role:"Project Manager", bio:"Agile-certified PM with a track record of delivering complex projects on time.", initials:"NV", color:"#ffedd5", accentColor:"#ea580c", isActive:true },
-];
 
 let portfolioCache = null;
 let teamCache = null;
