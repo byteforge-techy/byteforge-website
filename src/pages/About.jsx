@@ -30,7 +30,7 @@ export default function About() {
   const { members } = useTeam();
   const { get } = useContent();
 
-  const aboutTag = get("About","tagline","One Senior Software Engineer. End-to-End Ownership.");
+  const aboutTag = get("About","tagline","One Senior Engineer. End-to-End Ownership.");
   const aboutBody = get("About","body","Byte Forge is led by Chintan — a senior software engineer who's spent 10+ years shipping real products. When you work with Byte Forge, you don't get handed to a junior team. You get a seasoned engineer who handles architecture, development, and deployment personally.");
 
   const values = [
