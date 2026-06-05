@@ -180,7 +180,7 @@ export default function Home() {
             </div>
           </Reveal>
           <Reveal delay={0.08}>
-            <h1 style={{ ...fontHead, fontSize:"clamp(40px,7vw,88px)", fontWeight:800, lineHeight:1.05, letterSpacing:"-2px", margin:"0 0 8px" }}>
+            <h1 style={{ ...fontHead, fontSize:"clamp(40px,7vw,88px)", fontWeight:800, lineHeight:1.05, letterSpacing:"-2px", margin:"0 0 8px", color:"#fff" }}>
               {heroH1}
             </h1>
           </Reveal>
