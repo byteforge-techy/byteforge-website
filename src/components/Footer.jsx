@@ -1,6 +1,6 @@
 // src/components/Footer.jsx
 import { useNavigate } from "react-router-dom";
-import ByteForgeLogo from "./ByteForgeLogo";
+import ByteForgeLogo from "../assets/byteforge.svg";
 
 const LINKS = {
   Company: ["About Us", "Portfolio", "Careers", "Blog"],
