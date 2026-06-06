@@ -24,7 +24,7 @@ export default function Footer() {
       }} className="footer-grid">
         {/* Brand col */}
         <div>
-          <ByteForgeLogo size={36} showText={true} />
+          <ByteForgeLogo size={200} showText={true} />
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, marginTop: 20, maxWidth: 260 }}>
             A service-based IT firm building world-class software, apps, and cloud infrastructure for startups and enterprises.
           </p>

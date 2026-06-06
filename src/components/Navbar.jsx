@@ -50,7 +50,7 @@ export default function Navbar() {
         transition: "all 0.35s ease",
       }}>
         <div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-          <ByteForgeLogo size={36} showText={true} />
+          <ByteForgeLogo size={200} showText={true} />
         </div>
 
         <ul style={{ display: "flex", gap: 32, listStyle: "none", margin: 0, padding: 0 }} className="desktop-nav">
