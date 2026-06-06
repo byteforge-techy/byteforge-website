@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx — with Blog link added
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import ByteForgeLogo from "./ByteForgeLogo";
+import ByteForgeLogo from "../assets/ByteForgeLogo";
 
 const NAV_LINKS = [
   { label: "Services", path: "/services" },
