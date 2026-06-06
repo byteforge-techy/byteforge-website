@@ -8,7 +8,7 @@ export default function ByteForgeLogo({ size = 40, showText = true }) {
 
   return (
     <img
-      src="/byteforge-logo-cropped.svg"
+      src="/byteforge_logo.svg"
       alt="Byte Forge Technology"
       height={height}
       width={width}
