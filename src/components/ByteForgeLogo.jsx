@@ -1,6 +1,6 @@
 // src/components/ByteForgeLogo.jsx
 
-export default function ByteForgeLogo({ size = 40, showText = true }) {
+export default function ByteForgeLogo({ size = 120, showText = true }) {
   // Height is fixed; width scales proportionally (original SVG is 1920x1080 → ~16:9 but logo content is roughly 3:1)
   const height = size;
   const width = size * 3;
