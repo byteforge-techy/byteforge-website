@@ -1,32 +1,46 @@
 // src/components/ByteForgeLogo.jsx
+//
+// NOTE: Your two source SVGs (byteforge-icon-only_new.svg and
+// byteforge-full-logo_new.svg) turned out to be byte-for-byte identical —
+// there is no actual "text" version to load. Both only contain the square
+// "BF" monogram, sitting in a mostly-empty 1920x1080 canvas, which is why
+// it rendered as a tiny cramped blob in the header.
+//
+// This version uses ONE corrected icon file (byteforge-icon.svg — tightly
+// cropped, no more empty canvas) and renders the wordmark as real HTML text
+// next to it. That's more reliable than a second SVG anyway: crisper text,
+// easy to restyle/recolor, no font-in-a-vector guesswork.
 
-export default function ByteForgeLogo({ size = 120, showText = true }) {
-  // Height is fixed; width scales proportionally (original SVG is 1920x1080 → ~16:9 but logo content is roughly 3:1)
-  const height = size;
-  const width = size * 3;
-console.log("Show Text", showText);
-  if (showText) {
-    // Full logo with "byte forge technology" text — use the full SVG
-    return (
-      <img
-        src="/byteforge-icon-only_new.svg"
-        alt="Byte Forge Technology"
-        height={height}
-        width={width}
-        style={{ display: "block", objectFit: "contain" }}
-      />
-    );
-  }
-
-  // Icon only (no text) — still use full SVG but show only the monogram portion
-  // by cropping via a div with overflow hidden
+export default function ByteForgeLogo({ size = 36, showText = true }) {
   return (
-    <img
-      src="/byteforge-full-logo_new.svg"
-      alt="Byte Forge Technology"
-      height={height}
-      width={height}
-      style={{ display: "block", objectFit: "contain" }}
-    />
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: size * 0.3,
+      }}
+    >
+      <img
+        src="/byteforge-icon.svg"
+        alt="Byte Forge Technology"
+        height={size}
+        width={size}
+        style={{ display: "block", objectFit: "contain", flexShrink: 0 }}
+      />
+
+      {showText && (
+        <span
+          style={{
+            fontSize: size * 0.5,
+            fontWeight: 700,
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+            color: "#f5f5f5",
+          }}
+        >
+          Byte<span style={{ color: "#f59e0b" }}>Forge</span>
+        </span>
+      )}
+    </div>
   );
 }
