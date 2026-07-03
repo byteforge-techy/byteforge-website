@@ -13,6 +13,7 @@ import {
   BLUE, BLUE_LIGHT, BLUE_DARK, AMBER, AMBER_LIGHT,
   AMBER_DARK, DARK, INK, TEXT_MUTED, TEXT_ON_DARK,
   TEXT_ON_DARK_SOFT, BADGE_TEXT, BORDER, BG_ALT,
+  CONTAINER,
 } from "../theme";
 
 // ── Splash ──────────────────────────────────────────────
@@ -113,7 +114,7 @@ function SectionLabel({ children, color=BLUE }) {
   );
 }
 
-const wrap = { maxWidth:1200, margin:"0 auto", padding:"0 24px" };
+const wrap = CONTAINER; // shared with Navbar/Footer — keeps every section aligned
 const fontHead = { fontFamily:"'Outfit',sans-serif" };
 
 // ════════════════════════════════════════════════════════
@@ -267,9 +268,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════ SERVICES (dark band) ═══════ */}
+      {/* ═══════ SERVICES + TECH STACK (single dark band) ═══════ */}
       <section style={{ background:`linear-gradient(160deg, ${INK}, #1a1f3a)`, padding:"100px 0", position:"relative" }}>
-        <div style={{ position:"absolute", inset:0, backgroundImage:`radial-gradient(circle at 20% 30%, ${BLUE}18, transparent 40%)`, opacity:0.7 }}/>
+        <div style={{ position:"absolute", inset:0, backgroundImage:`radial-gradient(circle at 20% 20%, ${BLUE}14, transparent 40%)`, opacity:0.7 }}/>
         <div style={{ ...wrap, position:"relative", textAlign:"center" }}>
           <Reveal><SectionLabel color={AMBER}>What I Offer</SectionLabel></Reveal>
           <Reveal delay={0.05}>
@@ -293,26 +294,20 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ═══════ TECH STACK (blue band) ═══════ */}
-      <section style={{ background:`linear-gradient(135deg, ${BLUE}, #1e40af)`, padding:"70px 0", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, backgroundImage:`linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px)`, backgroundSize:"40px 40px" }}/>
-        <div style={{ ...wrap, position:"relative", textAlign:"center" }}>
-          <Reveal>
-            <SectionLabel color={BADGE_TEXT}>Technologies I Work With</SectionLabel>
-            <h2 style={{ ...fontHead, fontSize:"clamp(26px,3.5vw,38px)", fontWeight:800, color:"#fff", margin:"0 0 36px", letterSpacing:"-1px" }}>
-              A Full Stack, One Engineer
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:14, justifyContent:"center" }}>
-              {techs.map((t, i) => (
-                <div key={i} style={{ background:"rgba(255,255,255,0.15)", border:"1px solid rgba(255,255,255,0.3)", color:"#fff", padding:"12px 26px", borderRadius:30, fontSize:16, fontWeight:600, backdropFilter:"blur(10px)" }}>
-                  {t}
-                </div>
-              ))}
+          {/* Tech stack — folded into the same band instead of its own loud blue section */}
+          <Reveal delay={0.15}>
+            <div style={{ marginTop:72, paddingTop:56, borderTop:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ ...fontHead, fontSize:13, fontWeight:700, letterSpacing:"2px", textTransform:"uppercase", color:BADGE_TEXT, marginBottom:24 }}>
+                Technologies I Work With
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:12, justifyContent:"center" }}>
+                {techs.map((t, i) => (
+                  <div key={i} style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.15)", color:TEXT_ON_DARK, padding:"9px 20px", borderRadius:30, fontSize:14.5, fontWeight:600 }}>
+                    {t}
+                  </div>
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>

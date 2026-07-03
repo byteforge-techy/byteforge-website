@@ -1,7 +1,7 @@
 // src/components/Footer.jsx
 import { useNavigate } from "react-router-dom";
 import ByteForgeLogo from "./ByteForgeLogo";
-import { BLUE, DARK, TEXT_ON_DARK_SOFT, BORDER_DARK } from "../theme";
+import { BLUE, DARK, TEXT_ON_DARK_SOFT, BORDER_DARK, CONTAINER } from "../theme";
 
 const LINKS = {
   Company: ["About Us", "Portfolio", "Careers", "Blog"],
@@ -16,8 +16,9 @@ export default function Footer() {
   return (
     <footer style={{
       background: DARK, color: "#fff",
-      padding: "64px 5% 32px", fontFamily: "'Outfit', sans-serif",
+      padding: "64px 0 32px", fontFamily: "'Outfit', sans-serif",
     }}>
+      <div style={{ ...CONTAINER }}>
       <div style={{
         display: "grid",
         gridTemplateColumns: "2fr 1fr 1fr 1fr",
@@ -78,6 +79,7 @@ export default function Footer() {
         <div style={{ color: TEXT_ON_DARK_SOFT, fontSize: 13 }}>
           Built with ♥ in India · <span style={{ color: BLUE }}>byteforgetechnology.com</span>
         </div>
+      </div>
       </div>
 
       <style>{`

@@ -9,8 +9,9 @@ import {
   BLUE, BLUE_LIGHT, BLUE_DARK, AMBER, AMBER_LIGHT,
   AMBER_DARK, DARK, INK, TEXT_MUTED, TEXT_ON_DARK,
   BADGE_TEXT, BORDER,
+  CONTAINER,
 } from "../theme";
-const wrap = { maxWidth:1200, margin:"0 auto", padding:"0 24px" };
+const wrap = CONTAINER; // shared with Navbar/Footer — keeps every section aligned
 const fontHead = { fontFamily:"'Outfit',sans-serif" };
 
 function useReveal() {

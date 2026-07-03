@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ByteForgeLogo from "../components/ByteForgeLogo";
-import { BLUE, DARK, TEXT_MUTED, INK, BORDER } from "../theme";
+import { BLUE, DARK, TEXT_MUTED, INK, BORDER, CONTAINER } from "../theme";
 
 const NAV_LINKS = [
   { label: "Services", path: "/services" },
@@ -43,13 +43,13 @@ export default function Navbar() {
       `}</style>
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: scrolled ? "12px 5%" : "20px 5%",
+        padding: scrolled ? "12px 0" : "20px 0",
         background: scrolled ? "rgba(250,250,248,0.93)" : "transparent",
         backdropFilter: scrolled ? "blur(14px)" : "none",
         borderBottom: scrolled ? `1px solid ${BORDER}` : "none",
         transition: "all 0.35s ease",
       }}>
+        <div style={{ ...CONTAINER, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
           <ByteForgeLogo size={36} showText={false} />
         </div>
@@ -96,15 +96,17 @@ export default function Navbar() {
             }} />
           ))}
         </div>
+        </div>
       </nav>
 
       {menuOpen && (
         <div style={{
           position: "fixed", top: 68, left: 0, right: 0, zIndex: 99,
           background: "rgba(250,250,248,0.97)", backdropFilter: "blur(14px)",
-          borderBottom: `1px solid ${BORDER}`, padding: "12px 5% 20px",
+          borderBottom: `1px solid ${BORDER}`, padding: "12px 0 20px",
           display: "flex", flexDirection: "column", gap: 0,
         }}>
+          <div style={{ ...CONTAINER }}>
           {NAV_LINKS.map(({ label, path }) => (
             <div key={label}
               className="mobile-nav-link"
@@ -129,6 +131,7 @@ export default function Navbar() {
           >
             Get in Touch
           </button>
+          </div>
         </div>
       )}
 

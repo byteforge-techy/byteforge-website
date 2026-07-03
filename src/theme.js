@@ -35,3 +35,10 @@ export const BORDER = "#e5e7eb";
 export const BORDER_DARK = "rgba(255,255,255,0.12)";
 export const BG = "#ffffff";
 export const BG_ALT = "#f7f8fc";
+
+// ── Layout ────────────────────────────────────────────────
+// Single source of truth for horizontal page margins. Navbar, Footer, and
+// every section now share this exact value, so content lines up on every
+// row instead of nav/footer using a proportional 5% gutter while sections
+// used a fixed 24px one (which drifted apart on wide screens).
+export const CONTAINER = { maxWidth: 1200, margin: "0 auto", padding: "0 24px", boxSizing: "border-box" };
