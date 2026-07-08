@@ -23,7 +23,7 @@ export default function ByteForgeLogo({ size = 36, showText = true }) {
       }}
     >
       <img
-        src="/byteforge-icon.png"
+        src="/byteforge-icon-square.png"
         alt="Byte Forge Technology"
         height={size}
         width={size}
